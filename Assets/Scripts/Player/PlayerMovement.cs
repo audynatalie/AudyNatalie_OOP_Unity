@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    // Fields untuk movement settings
+
     [SerializeField] private Vector2 maxSpeed;
     [SerializeField] private Vector2 timeToFullSpeed;
     [SerializeField] private Vector2 timeToStop;
@@ -12,49 +12,78 @@ public class PlayerMovement : MonoBehaviour
     private Vector2 moveVelocity;
     private Vector2 moveFriction;
     private Vector2 stopFriction;
+
     private Rigidbody2D rb;
 
     private void Start()
     {
-        // Mengambil komponen Rigidbody2D
+
         rb = GetComponent<Rigidbody2D>();
 
-        // Menghitung nilai awal untuk moveVelocity, moveFriction, dan stopFriction
         moveVelocity = 2 * maxSpeed / timeToFullSpeed;
         moveFriction = -2 * maxSpeed / (timeToFullSpeed * timeToFullSpeed);
-        stopFriction = -2 * maxSpeed / (timeToStop * timeToStop);
+        stopFriction = new Vector2(moveVelocity.x / timeToStop.x, moveVelocity.y / timeToStop.y);
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
     }
 
     public void Move()
     {
-        // Mengambil input dari pemain
+
         Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         moveDirection = input.normalized;
 
-        // Logika pergerakan berdasarkan input
+        Debug.Log("Input: " + input);
+
         if (input.magnitude > 0)
         {
-            moveVelocity += moveDirection * maxSpeed * Time.fixedDeltaTime;
-            moveVelocity = Vector2.ClampMagnitude(moveVelocity, maxSpeed.magnitude);
+
+            Vector2 targetVelocity = moveDirection * maxSpeed;
+            rb.velocity = Vector2.MoveTowards(rb.velocity, targetVelocity, moveVelocity.magnitude * Time.fixedDeltaTime);
         }
         else
         {
-            moveVelocity = Vector2.MoveTowards(moveVelocity, Vector2.zero, stopFriction.magnitude * Time.fixedDeltaTime);
+
+            rb.velocity = Vector2.MoveTowards(rb.velocity, Vector2.zero, stopFriction.magnitude * Time.fixedDeltaTime);
+
+            if (rb.velocity.magnitude < stopClamp.magnitude)
+            {
+                rb.velocity = Vector2.zero;
+            }
         }
 
-        // Mengatur kecepatan Rigidbody2D berdasarkan moveVelocity
-        rb.velocity = moveVelocity;
+        rb.velocity = new Vector2(
+            Mathf.Clamp(rb.velocity.x, -maxSpeed.x, maxSpeed.x),
+            Mathf.Clamp(rb.velocity.y, -maxSpeed.y, maxSpeed.y)
+        );
+
+        Debug.Log("Velocity: " + rb.velocity);
     }
 
     private Vector2 GetFriction()
     {
-        // Mengembalikan gaya gesek yang sesuai berdasarkan kondisi pergerakan
-        return rb.velocity.magnitude > 0 ? moveFriction : stopFriction;
+
+        if (rb.velocity.magnitude > stopClamp.magnitude)
+        {
+            return moveFriction * Time.fixedDeltaTime;
+        }
+        else
+        {
+            return stopFriction * Time.fixedDeltaTime;
+        }
     }
 
-    // Method untuk mengecek apakah Player sedang bergerak
+    private void MoveBound()
+    {
+
+    }
+
     public bool IsMoving()
     {
+
         return rb.velocity.magnitude > 0.1f;
     }
 }
