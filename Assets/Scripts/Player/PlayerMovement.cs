@@ -32,10 +32,10 @@ public class PlayerMovement : MonoBehaviour
     public void Move()
     {
         // Menghitung arah pergerakan berdasarkan input
-        float horizontalInput = Input.GetAxis("Horizontal");
-        float verticalInput = Input.GetAxis("Vertical");
+        float sumbuHorizontal = Input.GetAxis("Horizontal");
+        float sumbuVertical = Input.GetAxis("Vertical");
         
-        moveDirection = new Vector2(horizontalInput, verticalInput).normalized;
+        moveDirection = new Vector2(sumbuHorizontal, sumbuVertical).normalized;
 
         Vector2 friction = GetFriction();
         Vector2 velocity = moveDirection * maxSpeed;
@@ -63,18 +63,18 @@ public class PlayerMovement : MonoBehaviour
 
     void ConstrainMovementWithinBounds()
     {   
-        float edgeMargin = 0.5f; // Mengatur margin agar pemain tidak menyentuh tepi layar
-        float screenHeight = Camera.main.orthographicSize;
-        float screenWidth = screenHeight * Camera.main.aspect;
+        float boundaryMargin = 0.5f; // Mengatur margin agar pemain tidak menyentuh tepi layar
+        float viewportHeight = Camera.main.orthographicSize;
+        float viewportWidth = viewportHeight * Camera.main.aspect;
 
         // Menghitung posisi pemain dengan margin batas
-        Vector3 currentPlayerPosition = transform.position;
+        Vector3 playerPositionNow = transform.position;
         
-        currentPlayerPosition.x = Mathf.Clamp(currentPlayerPosition.x, -screenWidth + edgeMargin, screenWidth - edgeMargin);
-        currentPlayerPosition.y = Mathf.Clamp(currentPlayerPosition.y, -screenHeight + edgeMargin, screenHeight - edgeMargin);
+        playerPositionNow.x = Mathf.Clamp(playerPositionNow.x, -viewportWidth + boundaryMargin, viewportWidth - boundaryMargin);
+        playerPositionNow.y = Mathf.Clamp(playerPositionNow.y, -viewportHeight + boundaryMargin, viewportHeight - boundaryMargin);
 
         // Menerapkan posisi yang sudah dibatasi kembali ke pemain
-        transform.position = currentPlayerPosition;
+        transform.position = playerPositionNow;
     }
 
     public bool IsMoving()
