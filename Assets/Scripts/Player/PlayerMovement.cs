@@ -2,88 +2,84 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [SerializeField] private Vector2 maxSpeed;        // Kecepatan maksimum yang dapat dicapai oleh pemain
+    [SerializeField] private Vector2 timeToFullSpeed; // Waktu yang diperlukan untuk mencapai kecepatan penuh
+    [SerializeField] private Vector2 timeToStop;      // Waktu yang diperlukan untuk berhenti sepenuhnya
+    [SerializeField] private Vector2 stopClamp;       // Kecepatan minimum sebelum pemain berhenti
 
-    [SerializeField] private Vector2 maxSpeed;
-    [SerializeField] private Vector2 timeToFullSpeed;
-    [SerializeField] private Vector2 timeToStop;
-    [SerializeField] private Vector2 stopClamp;
+    private Vector2 moveDirection;   // Arah pergerakan
+    private Vector2 moveVelocity;    // Kecepatan yang diterapkan ke Rigidbody2D
+    private Vector2 moveFriction;    // Gesekan yang diterapkan saat bergerak
+    private Vector2 stopFriction;    // Gesekan yang diterapkan saat berhenti
+    private Rigidbody2D rb;          // Referensi ke Rigidbody2D
 
-    private Vector2 moveDirection;
-    private Vector2 moveVelocity;
-    private Vector2 moveFriction;
-    private Vector2 stopFriction;
-
-    private Rigidbody2D rb;
-
-    private void Start()
+    void Start()
     {
-
         rb = GetComponent<Rigidbody2D>();
 
+        // Menghitung nilai terkait pergerakan berdasarkan pengaturan input
         moveVelocity = 2 * maxSpeed / timeToFullSpeed;
         moveFriction = -2 * maxSpeed / (timeToFullSpeed * timeToFullSpeed);
-        stopFriction = new Vector2(moveVelocity.x / timeToStop.x, moveVelocity.y / timeToStop.y);
+        stopFriction = -2 * maxSpeed / (timeToStop * timeToStop);
     }
 
     private void FixedUpdate()
     {
-        Move();
+        Move(); // Memanggil metode untuk menggerakkan pemain
+        ConstrainMovementWithinBounds(); // Membatasi pergerakan pemain agar tetap dalam batas layar
     }
 
     public void Move()
     {
+        // Menghitung arah pergerakan berdasarkan input
+        float horizontalInput = Input.GetAxis("Horizontal");
+        float verticalInput = Input.GetAxis("Vertical");
+        
+        moveDirection = new Vector2(horizontalInput, verticalInput).normalized;
 
-        Vector2 input = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-        moveDirection = input.normalized;
+        Vector2 friction = GetFriction();
+        Vector2 velocity = moveDirection * maxSpeed;
+        
+        velocity -= friction * Time.fixedDeltaTime;
 
-        Debug.Log("Input: " + input);
-
-        if (input.magnitude > 0)
-        {
-
-            Vector2 targetVelocity = moveDirection * maxSpeed;
-            rb.velocity = Vector2.MoveTowards(rb.velocity, targetVelocity, moveVelocity.magnitude * Time.fixedDeltaTime);
-        }
-        else
-        {
-
-            rb.velocity = Vector2.MoveTowards(rb.velocity, Vector2.zero, stopFriction.magnitude * Time.fixedDeltaTime);
-
-            if (rb.velocity.magnitude < stopClamp.magnitude)
-            {
-                rb.velocity = Vector2.zero;
-            }
-        }
-
+        // Memperbarui kecepatan Rigidbody berdasarkan nilai yang dihitung dan batas kecepatan maksimum
         rb.velocity = new Vector2(
-            Mathf.Clamp(rb.velocity.x, -maxSpeed.x, maxSpeed.x),
-            Mathf.Clamp(rb.velocity.y, -maxSpeed.y, maxSpeed.y)
+            Mathf.Clamp(velocity.x, -maxSpeed.x, maxSpeed.x),
+            Mathf.Clamp(velocity.y, -maxSpeed.y, maxSpeed.y)
         );
 
-        Debug.Log("Velocity: " + rb.velocity);
-    }
-
-    private Vector2 GetFriction()
-    {
-
-        if (rb.velocity.magnitude > stopClamp.magnitude)
+        // Menghentikan pemain jika kecepatannya di bawah nilai stopClamp
+        if (Mathf.Abs(rb.velocity.x) < stopClamp.x && Mathf.Abs(rb.velocity.y) < stopClamp.y)
         {
-            return moveFriction * Time.fixedDeltaTime;
-        }
-        else
-        {
-            return stopFriction * Time.fixedDeltaTime;
+            rb.velocity = Vector2.zero;
         }
     }
 
-    private void MoveBound()
+    Vector2 GetFriction()
     {
+        // Mengembalikan nilai gesekan berdasarkan kondisi pergerakan
+        return moveDirection != Vector2.zero ? moveFriction : stopFriction;
+    }
 
+    void ConstrainMovementWithinBounds()
+    {   
+        float edgeMargin = 0.5f; // Mengatur margin agar pemain tidak menyentuh tepi layar
+        float screenHeight = Camera.main.orthographicSize;
+        float screenWidth = screenHeight * Camera.main.aspect;
+
+        // Menghitung posisi pemain dengan margin batas
+        Vector3 currentPlayerPosition = transform.position;
+        
+        currentPlayerPosition.x = Mathf.Clamp(currentPlayerPosition.x, -screenWidth + edgeMargin, screenWidth - edgeMargin);
+        currentPlayerPosition.y = Mathf.Clamp(currentPlayerPosition.y, -screenHeight + edgeMargin, screenHeight - edgeMargin);
+
+        // Menerapkan posisi yang sudah dibatasi kembali ke pemain
+        transform.position = currentPlayerPosition;
     }
 
     public bool IsMoving()
     {
-
+        // Memeriksa apakah pemain sedang bergerak dengan mengevaluasi kecepatan
         return rb.velocity.magnitude > 0.1f;
     }
 }
