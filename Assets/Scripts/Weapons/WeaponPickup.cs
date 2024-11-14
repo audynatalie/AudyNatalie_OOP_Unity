@@ -28,15 +28,19 @@ public class WeaponPickup : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             // Mengecek apakah pemain sudah memiliki senjata
+            Weapon weaponNow = other.GetComponentInChildren<Weapon>();
 
             if (weaponNow != null){
+                weaponNow.transform.SetParent(transform,false);
+                weaponNow.transform.localPosition = Vector3.zero;
                 TurnVisual(false, weaponNow);        
             }
 
 
                 weaponNow = weapon;
                 // Mengatur parent dari weapon menjadi objek player tanpa memindahkannya dari WeaponPickup
-                weapon.transform.SetParent(other.gameObject.transform, false);
+                weapon.transform.SetParent(Player.Instance.transform);
+                weapon.transform.localPosition = Vector3.zero;
 
                 // Mengaktifkan visual senjata agar tampak oleh pemain
                 TurnVisual(true);
