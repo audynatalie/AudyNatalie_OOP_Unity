@@ -1,41 +1,35 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Collider2D))]
 public class HitboxComponent : MonoBehaviour
 {
+    [SerializeField]
+    HealthComponent health;
 
-    private HealthComponent healthComponent;
+    Collider2D area;
 
-    private void Awake()
+    private InvincibilityComponent invincibilityComponent;
+
+
+    void Start()
     {
-        // Check if HealthComponent is attached to the same object
-        healthComponent=GetComponent<HealthComponent>();
-        if(healthComponent==null)
-        {
-
-            Debug.LogError("HealthComponent not found on " +gameObject.name);
-        }
-
+        area = GetComponent<Collider2D>();
+        invincibilityComponent = GetComponent<InvincibilityComponent>();
     }
 
-    // Method to reduce health by receiving damage from a Bullet
     public void Damage(Bullet bullet)
     {
-        if(bullet!=null)
-        {
+        if (invincibilityComponent != null && invincibilityComponent.isInvincible) return;
 
-            healthComponent.Subtract(bullet.damage);
-        }
-
+        if (health != null)
+            health.Subtract(bullet.damage);
     }
 
-    // Method to reduce health by receiving integer damage
     public void Damage(int damage)
     {
+        if (invincibilityComponent != null && invincibilityComponent.isInvincible) return;
 
-        healthComponent.Subtract(damage);
+        if (health != null)
+            health.Subtract(damage);
     }
-
 }

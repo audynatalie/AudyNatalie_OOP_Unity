@@ -38,5 +38,7 @@ public class GameManager : MonoBehaviour
         // Menandai objek GameManager dan Camera agar tidak dihancurkan saat pergantian scene
         DontDestroyOnLoad(gameObject);
         DontDestroyOnLoad(GameObject.Find("Camera"));
+
+        
     }
 }

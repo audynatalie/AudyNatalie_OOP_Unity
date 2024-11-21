@@ -4,30 +4,27 @@ using UnityEngine;
 
 public class HealthComponent : MonoBehaviour
 {
+    public int maxHealth = 10;
 
-    public float maxHealth;
-    private float health;
+    private int health;
 
-    // Getter for the health property
-    public float Health=>health;
-
-    // Setter to decrease the health value
-    public void Subtract(float damage)
+    void Awake()
     {
-        health -= damage;
+        health = maxHealth;
+    }
 
-        if(health<=0)
+    public void Subtract(int amount)
+    {
+        health -= amount;
+
+        if (health <= 0)
         {
-            Destroy(gameObject); // Destroy the object if health <= 0
+            Destroy(gameObject);
         }
     }
 
-    // Initialize health with maxHealth
-    private void Start()
+    public int GetHealth()
     {
-
-        health=maxHealth;
+        return health;
     }
-    
 }
-
