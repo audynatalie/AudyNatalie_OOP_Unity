@@ -25,7 +25,7 @@ public class GameManager : MonoBehaviour
         if (Instance != null && Instance != this)
         {
             // Jika instance lain sudah ada, hancurkan objek ini untuk mencegah duplikasi
-            Destroy(this);
+            Destroy(gameObject);
             return;
         }
 
@@ -35,10 +35,23 @@ public class GameManager : MonoBehaviour
         // Mengambil referensi ke LevelManager yang berada di dalam GameManager
         LevelManager = GetComponentInChildren<LevelManager>();
 
-        // Menandai objek GameManager dan Camera agar tidak dihancurkan saat pergantian scene
-        DontDestroyOnLoad(gameObject);
-        DontDestroyOnLoad(GameObject.Find("Camera"));
+        if (LevelManager == null)
+        {
+            Debug.LogError("LevelManager tidak ditemukan sebagai anak dari GameManager. Pastikan LevelManager ada di dalam GameManager.");
+        }
 
-        
+        // Menandai objek GameManager agar tidak dihancurkan saat pergantian scene
+        DontDestroyOnLoad(gameObject);
+
+        // Pastikan ada objek bernama "Camera"
+        GameObject mainCamera = GameObject.Find("Camera");
+        if (mainCamera != null)
+        {
+            DontDestroyOnLoad(mainCamera); // Menandai kamera agar tidak dihancurkan
+        }
+        else
+        {
+            Debug.LogWarning("Camera tidak ditemukan di scene. Pastikan ada objek bernama 'Camera'.");
+        }
     }
 }
