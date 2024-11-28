@@ -12,8 +12,6 @@ public class EnemyClickSpawner : MonoBehaviour
     void Start()
     {
        Assert.IsTrue(enemyVariants.Length > 0, "Tambahkan setidaknya 1 Prefab Enemy terlebih dahulu!");
-
-
     }
 
 

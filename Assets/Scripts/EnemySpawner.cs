@@ -92,7 +92,7 @@ public class EnemySpawner : MonoBehaviour
         {
             // Membuat instance musuh baru
             Enemy newEnemy = Instantiate(spawnedEnemy, transform.position, Quaternion.identity);
-            StartCoroutine(newEnemy.ActivateAfterDelay(0f)); // Mengaktifkan musuh setelah jeda
+            // StartCoroutine(newEnemy.ActivateAfterDelay(0f)); // Mengaktifkan musuh setelah jeda
         }
         else
         {

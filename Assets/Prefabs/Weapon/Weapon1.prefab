@@ -212,17 +212,24 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bullet
       objectReference: {fileID: 0}
+    - target: {fileID: 8930210143925168235, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8930210143925168235, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2014655073390058446}
   m_SourcePrefab: {fileID: 100100000, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
 --- !u!114 &182138147995285560 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 6797477432804813476, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
   m_PrefabInstance: {fileID: 6688522865469215388}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
+  m_GameObject: {fileID: 2827155368266775287}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d89eb19a968e940479ce7e0559181c15, type: 3}
@@ -233,3 +240,22 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5405059991623523764, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
   m_PrefabInstance: {fileID: 6688522865469215388}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2827155368266775287 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8930210143925168235, guid: 09a3a9b9f7b48bf408b6a88adeba62eb, type: 3}
+  m_PrefabInstance: {fileID: 6688522865469215388}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2014655073390058446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2827155368266775287}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 280f6c113a3248e4783078cc8dbee2c0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bullet: {fileID: 182138147995285560}
+  damage: 20

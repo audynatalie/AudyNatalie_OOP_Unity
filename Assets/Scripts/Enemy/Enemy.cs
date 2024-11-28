@@ -1,26 +1,29 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Enemy : MonoBehaviour
 {
-    public int Level;
+  [SerializeField] protected int level;
 
-    void Start()
-    {
-        // Setting dasar untuk Enemy
-        gameObject.SetActive(false); // Enemy tidak aktif di awal
-    }
+  public UnityEvent enemyKilledEvent;
 
-    void Update()
-    {
-        // Logika dasar untuk Enemy, bisa ditambahkan di sini jika diperlukan
-    }
+  private void Start()
+  {
+    enemyKilledEvent ??= new UnityEvent();
+  }
 
-    // Fungsi untuk mengaktifkan Enemy setelah waktu tertentu
-    public IEnumerator ActivateAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        gameObject.SetActive(true);
-    }
+  public void SetLevel(int level)
+  {
+    this.level = level;
+  }
+
+  public int GetLevel()
+  {
+    return level;
+  }
+
+  private void OnDestroy()
+  {
+    enemyKilledEvent.Invoke();
+  }
 }

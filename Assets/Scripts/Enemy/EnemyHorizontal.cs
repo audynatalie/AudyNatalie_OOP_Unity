@@ -1,80 +1,57 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class EnemyHorizontal : Enemy
 {
-    public float kecepatan = 2f; // Kecepatan gerakan musuh
-    private Vector2 arahGerak; // Arah gerakan musuh
-    public GameObject prefabEnemy; // Prefab musuh yang akan di-spawn
-
+    public float kecepatan=2f;
+    private Vector2 arahGerak;
+    public GameObject prefabEnemy;
     private void Start()
     {
-        // Pastikan prefabEnemy sudah diassign di Inspector
-        if (prefabEnemy == null)
-        {
-            Debug.LogError("Prefab musuh belum diassign di Inspector!"); // Peringatan jika prefabEnemy null
-            return; // Hentikan eksekusi jika prefabEnemy belum diatur
-        }
-
         // Posisikan musuh secara acak di sisi kiri atau kanan layar
         RespawnDiSisi();
-
-        // Spawn beberapa musuh secara acak
         SpawnMultipleEnemies(prefabEnemy, Random.Range(3, 7));
+    
     }
-
     private void Update()
     {
         // Gerakkan musuh secara horizontal
         transform.Translate(arahGerak * kecepatan * Time.deltaTime);
-
         // Cek apakah musuh keluar dari layar dan respawn jika perlu
         if (IsOutOfScreen())
         {
             RespawnDiSisi();
         }
     }
-
     // Cek apakah musuh keluar dari layar
     private bool IsOutOfScreen()
     {
-        return transform.position.x < -Screen.width / 80f || transform.position.x > Screen.width / 80f;
+        return transform.position.x<-Screen.width / 80f || transform.position.x>Screen.width/80f;
     }
-
     // Method untuk memposisikan musuh secara acak di sisi kiri atau kanan layar
     private void RespawnDiSisi()
     {
         // Tentukan sisi spawn secara acak (kiri atau kanan)
-        float spawnX = Random.Range(0, 2) == 0 ? -Screen.width / 110f : Screen.width / 120f;
-
-        float spawnY = Random.Range(-Screen.height / 80f, Screen.height / 80f);
-
+        float spawnX=Random.Range(0, 2)==0 ? -Screen.width/110f : Screen.width/120f;
+        
+        float spawnY=Random.Range(-Screen.height/80f, Screen.height/80f);
         // Set posisi musuh di sisi kiri atau kanan dengan posisi Y acak
-        transform.position = new Vector2(spawnX, spawnY);
-
+        transform.position=new Vector2(spawnX,spawnY);
         // Tentukan arah pergerakan horizontal berdasarkan sisi spawn
-        arahGerak = spawnX < 0 ? Vector2.right : Vector2.left;
-
+        arahGerak=spawnX<0 ? Vector2.right:Vector2.left;
         // Pastikan rotasi tetap pada keadaan awal (menghadap arah horizontal)
-        transform.rotation = Quaternion.identity;
+        
+        transform.rotation=Quaternion.identity;
+    
     }
-
-    public static void SpawnMultipleEnemies(GameObject prefabEnemy, int jumlah)
+    public static void SpawnMultipleEnemies(GameObject prefabEnemy,int jumlah)
     {
-        // Validasi apakah prefabEnemy sudah diassign
-        if (prefabEnemy == null)
-        {
-            Debug.LogError("Prefab musuh belum diassign untuk SpawnMultipleEnemies!"); // Peringatan jika prefabEnemy null
-            return; // Hentikan eksekusi jika prefabEnemy null
-        }
-
-        for (int i = 0; i < jumlah; i++)
+        for(int i=0;i<jumlah;i++)
         {
             // Buat instance baru dari musuh dan spawn di sisi acak
-            GameObject musuhBaru = Instantiate(prefabEnemy);
-            EnemyHorizontal skripMusuh = musuhBaru.GetComponent<EnemyHorizontal>();
-            skripMusuh?.RespawnDiSisi(); // Gunakan null-conditional operator untuk memanggil RespawnDiSisi
+            GameObject musuhBaru=Instantiate(prefabEnemy);
+            EnemyHorizontal skripMusuh=musuhBaru.GetComponent<EnemyHorizontal>();
+            skripMusuh?.RespawnDiSisi(); // Gunakan null-conditional operator
         }
     }
 }

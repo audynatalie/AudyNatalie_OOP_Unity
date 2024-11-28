@@ -1,94 +1,46 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class Portal : MonoBehaviour
 {
-    [SerializeField] private float speed = 5f; 
-    [SerializeField] private float rotateSpeed = 50f; 
-    private Vector3 newPosition; 
+    [SerializeField] float speed = 0.15f;
+    [SerializeField] float rotateSpeed = 5.0f;
 
-    // Mengatur posisi portal (acak) saat start
-    private void Start()
+    Vector2 newPosition;
+
+    void Start()
     {
         ChangePosition();
-    
     }
 
-    // Mengatur pergerakan portal dan rotasi portal
-    private void Update()
+    void Update()
     {
-        MovePortal();
-        RotatePortal();
-        if (PemainPunyaSenjata())
+        if (Vector2.Distance(transform.position, newPosition) < 0.5f)
+            ChangePosition();
+
+
+        if (GameObject.FindGameObjectWithTag("Player").GetComponentInChildren<Weapon>() != null)
         {
-            AktifkanPortal(true);
+            GetComponent<SpriteRenderer>().enabled = true;
+            GetComponent<Collider2D>().enabled = true;
+            transform.position = Vector2.Lerp(transform.position, newPosition, speed * Time.deltaTime);
         }
         else
         {
-            AktifkanPortal(false);
+            GetComponent<SpriteRenderer>().enabled = false;
+            GetComponent<Collider2D>().enabled = false;
         }
     }
 
-    // Mengatur tabrakan dengan player
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        if (other.gameObject.CompareTag("Player"))
         {
-            ActivateCanvasItems();
-            FindObjectOfType<LevelManager>().LoadScene("Main");
+            GameManager.Instance.LevelManager.LoadScene("Main");
         }
     }
 
-    private void ChangePosition()
+    void ChangePosition()
     {
-        newPosition=new Vector3(Random.Range(-10f, 10f), Random.Range(-10f, 10f), 0f);
+        newPosition = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f));
     }
-
-    private void MovePortal()
-    {
-        // Menggerakkan portal ke posisi baru jika belum mencapai
-        if(Vector3.Distance(transform.position, newPosition) < 0.5f)
-        {
-            ChangePosition();
-        }
-
-        transform.position=Vector3.MoveTowards(transform.position, newPosition, speed * Time.deltaTime);
-    }
-
-    private void RotatePortal()
-    {
-        transform.Rotate(Vector3.forward, rotateSpeed * Time.deltaTime);
-    }
-
-    private void ActivateCanvasItems()
-    {
-        foreach(Transform child in GameManager.Instance.transform)
-        {
-            if(child.GetComponent<Canvas>()!=null||child.GetComponent<UnityEngine.UI.Image>()!=null)
-            {
-                child.gameObject.SetActive(true);
-
-            }
-
-        }
-
-    }
-
-    private bool PemainPunyaSenjata()
-    {
-        
-        GameObject player = GameObject.FindWithTag("Player");
-        
-        return player != null && player.GetComponentInChildren<Weapon>() != null;
-    }
-
-    private void AktifkanPortal(bool enabled)
-    {
-        GetComponent<SpriteRenderer>().enabled = enabled;
-        
-        GetComponent<Collider2D>().enabled = enabled;
-
-    }
-
 }
