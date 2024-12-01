@@ -4,19 +4,19 @@ using UnityEngine;
 
 public class EnemyTargeting : Enemy
 {
-    private Transform playerTransform; // Posisi Player
-    private float speed = 2.0f;        // Kecepatan gerakan enemy
-   // Prefab EnemyTargeting
+    private Transform playerTransform;  // The position of the Player
+    private float speed = 2.0f;         // The movement speed of the enemy
 
+    // Start is called before the first frame update
     private void Start()
     {
-        // Temukan Player di dalam scene
+        // Find the Player object in the scene
         GameObject player = GameObject.FindGameObjectWithTag("Player");
 
-        // Pastikan Player ditemukan sebelum menetapkan transform-nya
+        // Ensure the Player was found before assigning its transform
         if (player != null)
         {
-            playerTransform = player.transform;
+            playerTransform = player.transform;  // Set the playerTransform to the Player's position
         }
         else
         {
@@ -24,23 +24,26 @@ public class EnemyTargeting : Enemy
         }
     }
 
+    // Update is called once per frame
     private void Update()
     {
-        // Jika Player ditemukan, bergerak ke arahnya
+        // If the Player is found, move towards it
         if (playerTransform != null)
         {
-            // Hitung arah gerakan menuju Player
+            // Calculate the direction from the enemy to the player, and normalize it
             Vector2 direction = (playerTransform.position - transform.position).normalized;
+            // Move the enemy towards the player
             transform.Translate(direction * speed * Time.deltaTime);
         }
     }
 
+    // Triggered when the enemy collides with another collider
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        // Jika enemy bersentuhan dengan Player, maka enemy akan hilang
+        // If the enemy collides with the Player, destroy the enemy
         if (collision.CompareTag("Player"))
         {
-            Destroy(gameObject); // Menghancurkan enemy saat menyentuh Player
+            Destroy(gameObject);  // Destroy the enemy object when it touches the player
         }
     }
 }
