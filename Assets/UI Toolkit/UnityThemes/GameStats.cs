@@ -4,10 +4,12 @@ using UnityEngine.UIElements;
 public class GameStats : MonoBehaviour
 {
     public VisualElement rootVisualElement;
-    private Label healthLabel;
-    private Label enemiesLeftLabel;
-    private Label waveLabel;
-    private Label pointsLabel;
+
+    private Label health;
+    private Label enemiesleft;
+    private Label wave;
+    private Label point;
+
     private HealthComponent playerHealthComponent;
 
     private void OnEnable()
@@ -15,59 +17,43 @@ public class GameStats : MonoBehaviour
         var uiDocument = GetComponent<UIDocument>();
         rootVisualElement = uiDocument.rootVisualElement;
 
-        // Menggunakan metode Find untuk mendapatkan elemen UI
-        healthLabel = FindLabel("health");
-        enemiesLeftLabel = FindLabel("enemiesleft");
-        waveLabel = FindLabel("wave");
-        pointsLabel = FindLabel("point");
+        health = rootVisualElement.Q<Label>("health");
+        enemiesleft = rootVisualElement.Q<Label>("enemiesleft");
+        wave = rootVisualElement.Q<Label>("wave");
+        point = rootVisualElement.Q<Label>("point");
 
-        // Mendapatkan referensi ke HealthComponent dari objek dengan tag "Player"
-        playerHealthComponent = FindPlayerHealthComponent();
-    }
-
-    // Fungsi untuk mencari elemen Label berdasarkan nama
-    private Label FindLabel(string name)
-    {
-        return rootVisualElement.Q<Label>(name);
-    }
-
-    // Fungsi untuk mencari HealthComponent pada objek Player
-    private HealthComponent FindPlayerHealthComponent()
-    {
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
-        return playerObject != null ? playerObject.GetComponent<HealthComponent>() : null;
+        if (playerObject != null)
+        {
+            playerHealthComponent = playerObject.GetComponent<HealthComponent>();
+        }
     }
 
-    // Fungsi untuk memperbarui tampilan kesehatan pemain
-    public void UpdateHealth(float health)
+    public void SetHealth(float healthValue)
     {
-        healthLabel.text = $"Health: {health}";
+        health.text = $"Health: {healthValue}";
     }
 
-    // Fungsi untuk memperbarui tampilan jumlah musuh yang tersisa
-    public void UpdateEnemiesLeft(int enemiesLeft)
+    public void SetEnemiesLeft(int enemiesLeftCount)
     {
-        enemiesLeftLabel.text = $"Enemies Left: {enemiesLeft}";
+        enemiesleft.text = $"Enemies Left: {enemiesLeftCount}";
     }
 
-    // Fungsi untuk memperbarui tampilan gelombang
-    public void UpdateWave(int wave)
+    public void SetWave(int waveValue)
     {
-        waveLabel.text = $"Wave: {wave}";
+        wave.text = $"Wave: {waveValue}";
     }
 
-    // Fungsi untuk memperbarui tampilan poin
-    public void UpdatePoints(int points)
+    public void SetPoints(int pointsValue)
     {
-        pointsLabel.text = $"Points: {points}";
+        point.text = $"Points: {pointsValue}";
     }
 
     private void Update()
     {
-        // Memperbarui kesehatan jika HealthComponent tersedia
         if (playerHealthComponent != null)
         {
-            UpdateHealth(playerHealthComponent.Health);
+            SetHealth(playerHealthComponent.Health);
         }
     }
 }

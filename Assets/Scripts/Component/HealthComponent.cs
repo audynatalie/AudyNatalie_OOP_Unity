@@ -2,29 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(BoxCollider2D))]
 public class HealthComponent : MonoBehaviour
 {
-    public int maxHealth = 10;
+    [SerializeField] public float maxHealth;
+    [SerializeField] private float health;
 
-    private int health;
+    // Getter untuk health
+    public float Health => health;
 
-    void Awake()
+    // Subtract damage from health
+    private void Start()
     {
-        health = maxHealth;
+        health = maxHealth; // Initialize health to maxHealth at the start
     }
-
-    public void Subtract(int amount)
+    
+    public void Subtract(float damage)
     {
-        health -= amount;
-
+        health -= damage;
+        Debug.Log($"Health reduced by {damage}. Current health: {health}");
         if (health <= 0)
         {
-            Destroy(gameObject);
+            Destroy(gameObject); // Destroy the object when health is 0 or less
         }
     }
 
-    public int GetHealth()
-    {
-        return health;
-    }
 }

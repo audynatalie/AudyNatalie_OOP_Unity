@@ -1,45 +1,39 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-
-    public static Player Instance;
-
-
-    private PlayerMovement playerMovement;
+    public static Player Instance {get ; private set; }
+    public PlayerMovement playerMovement;
     private Animator animator;
-
-    private void Awake()
+    
+    void Awake()
     {
-        if (Instance == null)
+        if (Instance != null && Instance != this)
         {
-            Instance = this;
+            Destroy(gameObject);
         }
         else
         {
-            Destroy(gameObject);
-            return;
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-
-        DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    void Start()
     {
-
         playerMovement = GetComponent<PlayerMovement>();
         animator = GameObject.Find("EngineEffect").GetComponent<Animator>();
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
-
         playerMovement.Move();
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
-
         animator.SetBool("IsMoving", playerMovement.IsMoving());
     }
 }

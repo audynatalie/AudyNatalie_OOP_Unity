@@ -1,68 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+
 public class EnemyTargeting : Enemy
 {
-    private Transform transformPemain; // Posisi Pemain
-    private float kecepatan=2.0f;    // Kecepatan gerakan musuh
-    public GameObject prefabEnemy;     // Prefab EnemyTargeting
+    private Transform playerTransform; // Posisi Player
+    private float speed = 2.0f;        // Kecepatan gerakan enemy
+   // Prefab EnemyTargeting
+
     private void Start()
     {
-        // Temukan Pemain dalam scene
-        GameObject pemain=GameObject.FindGameObjectWithTag("Player");
-        // Pastikan Pemain ditemukan sebelum menetapkan transform-nya
-        transformPemain=pemain?.transform;
-        if(transformPemain==null)
+        // Temukan Player di dalam scene
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        // Pastikan Player ditemukan sebelum menetapkan transform-nya
+        if (player != null)
         {
-            Debug.LogWarning("Pemain tidak ditemukan dalam scene. EnemyTargeting tidak akan bergerak.");
-        
+            playerTransform = player.transform;
         }
-        // Spawn beberapa musuh secara acak
-        SpawnMultipleEnemies(prefabEnemy, Random.Range(1, 6));
+        else
+        {
+            Debug.LogWarning("Player not found in the scene. EnemyTargeting will not move.");
+        }
     }
+
     private void Update()
     {
-        // Jika Pemain ditemukan, bergerak ke arahnya
-        if (transformPemain!=null)
+        // Jika Player ditemukan, bergerak ke arahnya
+        if (playerTransform != null)
         {
-            // Hitung arah gerakan menuju Pemain
-            Vector2 arah=(transformPemain.position-transform.position).normalized;
-            transform.Translate(arah*kecepatan*Time.deltaTime);
-       
-        }
-    
-    }
-    private void OnTriggerEnter2D(Collider2D tabrakan)
-    {
-        // Jika musuh bersentuhan dengan Pemain, maka musuh akan hilang
-        if (tabrakan.CompareTag("Player"))
-        {
-            
-            Destroy(gameObject); // Menghancurkan musuh saat menyentuh Pemain
+            // Hitung arah gerakan menuju Player
+            Vector2 direction = (playerTransform.position - transform.position).normalized;
+            transform.Translate(direction * speed * Time.deltaTime);
         }
     }
-    // Method untuk spawn beberapa musuh secara acak
-    public void SpawnMultipleEnemies(GameObject prefabEnemy, int jumlah)
+
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        for(int i=0; i<jumlah;i++)
+        // Jika enemy bersentuhan dengan Player, maka enemy akan hilang
+        if (collision.CompareTag("Player"))
         {
-            // Tentukan posisi spawn secara acak di sisi kiri atau kanan layar
-            float spawnX=Random.Range(0, 2) == 0 ? -Screen.width / 110f : Screen.width / 110f;
-           
-            float spawnY=Random.Range(-Screen.height / 80f, Screen.height / 80f);
-            // Buat instance baru dari prefab EnemyTargeting
-            GameObject musuhBaru=Instantiate(prefabEnemy, new Vector2(spawnX, spawnY), Quaternion.identity);
-           
-            EnemyTargeting skripMusuh=musuhBaru.GetComponent<EnemyTargeting>();
-            
-            skripMusuh?.SetPlayerTransform(transformPemain); // Set target pemain dengan null-conditional operator
-       
+            Destroy(gameObject); // Menghancurkan enemy saat menyentuh Player
         }
-    }
-    // Menggunakan setter untuk set player transform
-    private void SetPlayerTransform(Transform pemain)
-    {
-        transformPemain = pemain;
-    
     }
 }

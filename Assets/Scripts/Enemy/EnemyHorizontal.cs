@@ -1,57 +1,54 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-public class EnemyHorizontal : Enemy
+
+public class EnemyHorizontalMovement : Enemy
 {
-    public float kecepatan=2f;
-    private Vector2 arahGerak;
-    public GameObject prefabEnemy;
-    private void Start()
+    [SerializeField] private float moveSpeed = 5f;
+
+    private Vector2 dir;
+
+    private void Awake()
     {
-        // Posisikan musuh secara acak di sisi kiri atau kanan layar
-        RespawnDiSisi();
-        SpawnMultipleEnemies(prefabEnemy, Random.Range(3, 7));
-    
+        PickRandomPositions();
     }
+
     private void Update()
     {
-        // Gerakkan musuh secara horizontal
-        transform.Translate(arahGerak * kecepatan * Time.deltaTime);
-        // Cek apakah musuh keluar dari layar dan respawn jika perlu
-        if (IsOutOfScreen())
+        transform.Translate(moveSpeed * Time.deltaTime * dir);
+
+        Vector3 ePos = Camera.main.WorldToViewportPoint(new(transform.position.x, transform.position.y, transform.position.z));
+
+        if (ePos.x < -0.05f && dir == Vector2.right)
         {
-            RespawnDiSisi();
+            PickRandomPositions();
+        }
+        if (ePos.x > 1.05f && dir == Vector2.left)
+        {
+            PickRandomPositions();
         }
     }
-    // Cek apakah musuh keluar dari layar
-    private bool IsOutOfScreen()
+
+    private void PickRandomPositions()
     {
-        return transform.position.x<-Screen.width / 80f || transform.position.x>Screen.width/80f;
-    }
-    // Method untuk memposisikan musuh secara acak di sisi kiri atau kanan layar
-    private void RespawnDiSisi()
-    {
-        // Tentukan sisi spawn secara acak (kiri atau kanan)
-        float spawnX=Random.Range(0, 2)==0 ? -Screen.width/110f : Screen.width/120f;
-        
-        float spawnY=Random.Range(-Screen.height/80f, Screen.height/80f);
-        // Set posisi musuh di sisi kiri atau kanan dengan posisi Y acak
-        transform.position=new Vector2(spawnX,spawnY);
-        // Tentukan arah pergerakan horizontal berdasarkan sisi spawn
-        arahGerak=spawnX<0 ? Vector2.right:Vector2.left;
-        // Pastikan rotasi tetap pada keadaan awal (menghadap arah horizontal)
-        
-        transform.rotation=Quaternion.identity;
-    
-    }
-    public static void SpawnMultipleEnemies(GameObject prefabEnemy,int jumlah)
-    {
-        for(int i=0;i<jumlah;i++)
+        Vector2 randPos;
+
+        if (Random.Range(-1, 1) >= 0)
         {
-            // Buat instance baru dari musuh dan spawn di sisi acak
-            GameObject musuhBaru=Instantiate(prefabEnemy);
-            EnemyHorizontal skripMusuh=musuhBaru.GetComponent<EnemyHorizontal>();
-            skripMusuh?.RespawnDiSisi(); // Gunakan null-conditional operator
+            dir = Vector2.right;
         }
+        else
+        {
+            dir = Vector2.left;
+        }
+
+        if (dir == Vector2.right)
+        {
+            randPos = new(1.1f, Random.Range(0.1f, 0.95f));
+        }
+        else
+        {
+            randPos = new(-0.01f, Random.Range(0.1f, 0.95f));
+        }
+
+        transform.position = Camera.main.ViewportToWorldPoint(randPos) + new Vector3(0, 0, 10);
     }
 }

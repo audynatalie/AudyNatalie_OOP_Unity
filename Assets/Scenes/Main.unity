@@ -245,6 +245,7 @@ MonoBehaviour:
   waveInterval: 5
   waveNumber: 1
   totalEnemies: 0
+  points: 0
 --- !u!4 &413443084
 Transform:
   m_ObjectHideFlags: 0
@@ -612,6 +613,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1273945339784132058, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
+      propertyPath: spawnCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1273945339784132058, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
       propertyPath: spawnedEnemy
       value: 
       objectReference: {fileID: 7114401206426828304, guid: 8b389df0894de8a4c88bce70d694bee1, type: 3}
@@ -619,6 +624,18 @@ PrefabInstance:
       propertyPath: combatManager
       value: 
       objectReference: {fileID: 413443083}
+    - target: {fileID: 1273945339784132058, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
+      propertyPath: spawnInterval
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1273945339784132058, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
+      propertyPath: defaultSpawnCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1273945339784132058, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
+      propertyPath: minimumKillsToIncreaseSpawnCount
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5937369753255695394, guid: ece79941bc65aab49b9087820e92dc4a, type: 3}
       propertyPath: m_Name
       value: EnemyBossSpawner

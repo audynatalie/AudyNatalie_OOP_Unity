@@ -179,7 +179,6 @@ MonoBehaviour:
   enemyKilledEvent:
     m_PersistentCalls:
       m_Calls: []
-  prefabEnemy: {fileID: 0}
 --- !u!114 &3931674514218619757
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207,6 +206,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxHealth: 40
+  health: 0
 --- !u!114 &8290483115898645775
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dadc1bb707cd07d48b8340f51e95bf9e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: {fileID: 3106302408997913334}
+  healthComponent: {fileID: 3106302408997913334}
 --- !u!114 &7386252549151987419
 MonoBehaviour:
   m_ObjectHideFlags: 0

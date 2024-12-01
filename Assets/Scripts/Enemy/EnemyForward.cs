@@ -1,63 +1,46 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-public class EnemyForward : Enemy
+
+public class EnemyHorizontal : Enemy
 {
-    public float kecepatanGerak=2f;
-    public GameObject prefabEnemy;
+    public float speed = 2f;
+    private Vector2 moveDirection;
+
+    private float spawnRangeX = 8f;  // Rentang spawn di X
+    private float spawnYRange = 4f;  // Rentang spawn di Y
+
     private void Start()
     {
-        // Memulai musuh pada posisi acak di atas layar dan spawn musuh baru
-        SpawnEnemiesAtTop(Random.Range(3,7));
-   
+        RespawnAtSide();
     }
+
     private void Update()
     {
-        // Gerakkan musuh ke bawah dengan kecepatan tertentu
-        MoveEnemyDown();
-        // Respawn musuh jika keluar dari layar di bagian bawah
-        RespawnIfOutOfScreen();
-    
-    }
-    private void MoveEnemyDown()
-    {
-        // Menggerakkan musuh ke bawah sesuai kecepatan
-        transform.Translate(Vector2.down * kecepatanGerak * Time.deltaTime);
-   
-    }
-    private void RespawnIfOutOfScreen()
-    {
-        // Cek apakah musuh sudah keluar dari layar dan spawn ulang jika perlu
-        if (transform.position.y < -Screen.height / 85f)
+        // Gerakkan musuh secara horizontal
+        transform.Translate(moveDirection * speed * Time.deltaTime);
+
+        // Jika musuh keluar dari layar di bagian kiri atau kanan, respawn di sisi berlawanan
+        if (transform.position.x < -spawnRangeX || transform.position.x > spawnRangeX)
         {
-            RespawnAtTop();
+            RespawnAtSide();
         }
     }
-    private void RespawnAtTop()
+
+    // Method untuk memposisikan musuh secara acak di sisi kiri atau kanan layar
+    private void RespawnAtSide()
     {
-        // Memposisikan musuh secara acak di bagian atas layar
-        float posisiAcakX = Random.Range(-Screen.width / 105f, Screen.width / 105f);
-        
-        transform.position = new Vector2(posisiAcakX, Screen.height / 85f);
-        // Rotasi musuh tetap pada orientasi awal
+        // Tentukan sisi spawn secara acak (kiri atau kanan)
+        float spawnX = Random.Range(0, 2) == 0 ? -spawnRangeX : spawnRangeX;
+        float spawnY = Random.Range(-spawnYRange, spawnYRange);
+
+        // Set posisi musuh di sisi kiri atau kanan dengan posisi Y acak
+        transform.position = new Vector2(spawnX, spawnY);
+
+        // Tentukan arah pergerakan horizontal berdasarkan sisi spawn
+        moveDirection = spawnX < 0 ? Vector2.right : Vector2.left;
+
+        // Pastikan rotasi tetap pada keadaan awal (menghadap arah horizontal)
         transform.rotation = Quaternion.identity;
-    }
-    public void SpawnEnemiesAtTop(int jumlahMusuh)
-    {
-        // Menambahkan musuh baru ke layar
-        for (int i=0; i<jumlahMusuh; i++)
-        {
-            SpawnSingleEnemy();
-        }
-    }
-    private void SpawnSingleEnemy()
-    {
-        // Membuat dan menginisialisasi musuh baru
-        GameObject newEnemy=Instantiate(prefabEnemy);
-        EnemyForward enemyScript=newEnemy.GetComponent<EnemyForward>();
-        if (enemyScript!=null)
-        {
-            enemyScript.RespawnAtTop(); // Tentukan posisi spawn di bagian atas layar
-        }
     }
 }

@@ -1,30 +1,46 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class AttackComponent : MonoBehaviour
 {
-    public Bullet bullet;
-    public int damage;
+    public Bullet bullet;  // Bullet used for attack
+    public int damage;     // Damage dealt by the object
 
-    private void OnTriggerEnter2D(Collider2D other)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (other.gameObject.CompareTag(gameObject.tag)) return;
-
-        if (other.GetComponent<HitboxComponent>() != null)
+        var hitbox = GetComponent<HitboxComponent>();
+        if (collision.gameObject.tag == gameObject.tag)
         {
-            HitboxComponent hitbox = other.GetComponent<HitboxComponent>();
+            return;
+        }
+        if (collision.CompareTag("Bullet"))
+        {
+            // int damage = collision.GetComponent<Bullet>().damage; // Get damage from Bullet
 
-            if (bullet != null)
+            if (hitbox != null)
             {
-                hitbox.Damage(bullet.damage);
+                hitbox.Damage(collision.GetComponent<Bullet>()); // Apply damage using HitboxComponent with Bullet parameter
+                Debug.Log("Bullet damage applied.");
             }
-
-            hitbox.Damage(damage);
         }
 
-        if (other.GetComponent<InvincibilityComponent>() != null)
+        if (collision.gameObject.tag == "Enemy" || collision.gameObject.tag == "Player")
         {
-            other.GetComponent<InvincibilityComponent>().TriggerInvincibility();
+            hitbox = GetComponent<HitboxComponent>();
+            if (hitbox != null)
+            {
+                hitbox.Damage(damage);
+                Debug.Log("Direct damage applied.");
+                
+                var invincibility = collision.GetComponent<InvicibiltyComponent>();
+                if (invincibility != null)
+                {
+                    invincibility.StartInvincibility();
+                    Debug.Log("Invincibility started for collided object."); // Start the invincibility effect
+                }
+            }
         }
     }
 }
